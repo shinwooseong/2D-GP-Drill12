@@ -113,6 +113,16 @@ class Zombie:
         return BehaviorTree.SUCCESS
 
 
+    def move_little_to_different(self, tx, ty):
+        # 여기를 채우시오.
+        # 스스로 유도할 수 있어야함.
+        # 삼각형 공식 tan세타 = 높이/밑변
+        self.dir = math.atan2(self.y - common.boy.y, self.x - common.boy.x)
+        distance = game_framework.frame_time * RUN_SPEED_PPS
+        self.x += distance * math.cos(self.dir)
+        self.y += distance * math.sin(self.dir)
+        return BehaviorTree.SUCCESS
+
 
     def move_to(self, r=0.5):
         # 여기를 채우시오.
@@ -148,27 +158,27 @@ class Zombie:
         if self.distance_less_than(common.boy.x, common.boy.y, self.x, self.y, distance) and \
                 self.ball_count > common.boy.ball_count:
             return BehaviorTree.SUCCESS
-        return BehaviorTree.FAIL
+        else:
+            return BehaviorTree.FAIL
 
     def if_boy_nearby_less(self, distance):
         if self.distance_less_than(common.boy.x, common.boy.y, self.x, self.y, distance) and \
                 self.ball_count < common.boy.ball_count:
             return BehaviorTree.SUCCESS
-        return BehaviorTree.FAIL
+        else:
+            return BehaviorTree.FAIL
 
 
     def move_away_from_boy(self, r=0.5):
         # 소년으로부터 반대 방향으로 이동. 충분히 멀어지면 SUCCESS
         self.state = 'Walk'
         # 소년으로부터 반대 방향
-        self.dir = math.atan2(self.y - common.boy.y, self.x - common.boy.x)
-        distance = RUN_SPEED_PPS * game_framework.frame_time
-        self.x += distance * math.cos(self.dir)
-        self.y += distance * math.sin(self.dir)
+        self.move_little_to_different(self.tx, self.ty)
         # 소년과 충분히 떨어지면 완료
         if not self.distance_less_than(common.boy.x, common.boy.y, self.x, self.y, r):
             return BehaviorTree.SUCCESS
-        return BehaviorTree.RUNNING
+        else:
+            return BehaviorTree.RUNNING
 
 
     def move_to_boy(self, r=0.5):
